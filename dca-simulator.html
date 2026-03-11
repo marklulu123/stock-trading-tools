@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCA Investment Simulator — Dollar Cost Average into US Stocks</title>
+    <meta name="description" content="Backtest dollar-cost averaging into Tesla, Nvidia, Apple, S&P 500. See historical returns, compare lump sum vs DCA, and visualize your portfolio growth.">
+    <meta name="keywords" content="DCA simulator, dollar cost averaging calculator, stock DCA backtest, Tesla DCA, investment simulator">
+    <link rel="canonical" href="https://mgbaba.com/tools/investment-calculator">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0e27; color: #e0e6ff; min-height: 100vh; }
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+        h1 { font-size: 1.8rem; text-align: center; margin-bottom: 8px; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { text-align: center; color: #94a3b8; margin-bottom: 36px; }
+        .card { background: #131836; border: 1px solid #2d3470; border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+        .card h2 { font-size: 1.1rem; margin-bottom: 20px; color: #f1f5f9; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        @media (max-width: 640px) { .input-grid { grid-template-columns: 1fr; } }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; }
+        .input-group input, .input-group select { background: #0d1025; border: 1px solid #2d3470; color: #e0e6ff; padding: 12px 16px; border-radius: 8px; font-size: 1rem; outline: none; }
+        .input-group input:focus, .input-group select:focus { border-color: #60a5fa; }
+        .btn { display: block; width: 100%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 14px; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 20px; }
+        .btn:hover { opacity: 0.9; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        @media (max-width: 640px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+        .stat { background: #0d1025; border-radius: 12px; padding: 16px; text-align: center; }
+        .stat .label { font-size: 0.8rem; color: #64748b; margin-bottom: 4px; }
+        .stat .value { font-size: 1.3rem; font-weight: 700; }
+        .stat .value.green { color: #22c55e; }
+        .stat .value.blue { color: #60a5fa; }
+        .chart-container { position: relative; background: #0d1025; border-radius: 12px; padding: 20px; height: 300px; }
+        canvas { width: 100% !important; height: 100% !important; }
+        .legend { display: flex; gap: 20px; justify-content: center; margin-top: 12px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #94a3b8; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .cta-box { background: linear-gradient(145deg, #1e1b4b, #1a1f45); border: 1px solid #4338ca; border-radius: 12px; padding: 24px; text-align: center; margin-top: 28px; }
+        .cta-box h3 { color: #f1f5f9; margin-bottom: 8px; }
+        .cta-box p { color: #94a3b8; margin-bottom: 16px; font-size: 0.95rem; }
+        .cta-box a { display: inline-block; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        .footer { text-align: center; margin-top: 48px; padding-top: 20px; border-top: 1px solid #1e2550; color: #64748b; font-size: 0.85rem; }
+        .footer a { color: #60a5fa; text-decoration: none; }
+        .back { display: inline-block; color: #60a5fa; text-decoration: none; margin-bottom: 20px; font-size: 0.9rem; }
+        .results { display: none; }
+        .results.show { display: block; }
+        .disclaimer { font-size: 0.8rem; color: #475569; text-align: center; margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">← All Tools</a>
+        <h1>DCA Investment Simulator</h1>
+        <p class="subtitle">See what would happen if you invested regularly in US stocks</p>
+
+        <div class="card">
+            <h2>Set Up Your DCA Strategy</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Stock</label>
+                    <select id="stock">
+                        <option value="TSLA">Tesla (TSLA)</option>
+                        <option value="NVDA">Nvidia (NVDA)</option>
+                        <option value="AAPL">Apple (AAPL)</option>
+                        <option value="MSFT">Microsoft (MSFT)</option>
+                        <option value="AMZN">Amazon (AMZN)</option>
+                        <option value="GOOGL">Google (GOOGL)</option>
+                        <option value="META">Meta (META)</option>
+                        <option value="SPY" selected>S&P 500 (SPY)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Monthly Investment ($)</label>
+                    <input type="number" id="monthly" value="100" min="1" max="100000">
+                </div>
+                <div class="input-group">
+                    <label>Time Period</label>
+                    <select id="period">
+                        <option value="12">1 year</option>
+                        <option value="24">2 years</option>
+                        <option value="36" selected>3 years</option>
+                        <option value="60">5 years</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" onclick="simulate()">Run Simulation</button>
+        </div>
+
+        <div class="results" id="results">
+            <div class="stats-grid">
+                <div class="stat"><div class="label">Total Invested</div><div class="value blue" id="totalInvested">$0</div></div>
+                <div class="stat"><div class="label">Portfolio Value</div><div class="value green" id="portfolioValue">$0</div></div>
+                <div class="stat"><div class="label">Total Return</div><div class="value green" id="totalReturn">0%</div></div>
+                <div class="stat"><div class="label">vs Lump Sum</div><div class="value" id="vsLumpSum">—</div></div>
+            </div>
+
+            <div class="card">
+                <div class="chart-container">
+                    <canvas id="chart"></canvas>
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>DCA Portfolio</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>Total Invested</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:#f59e0b88"></div>Lump Sum</div>
+                </div>
+            </div>
+
+            <div class="cta-box">
+                <h3>Start DCA with Stock Tokens</h3>
+                <p>Buy fractional US stocks from $1, no broker needed. Set up recurring buys on OKX, Binance, or Bitget.</p>
+                <a href="https://mgbaba.com/blog/dollar-cost-averaging-stocks-with-crypto" target="_blank">Read DCA Guide →</a>
+            </div>
+
+            <p class="disclaimer">* Simulation uses approximate historical returns. Past performance does not guarantee future results. This is not financial advice.</p>
+        </div>
+
+        <div class="footer">
+            <p>Built by <a href="https://mgbaba.com" target="_blank">MGBABA</a> — Buy 50+ US Stocks from $1, No Broker Needed</p>
+            <p style="margin-top: 6px;"><a href="https://mgbaba.com/tools/investment-calculator" target="_blank">Advanced Calculator</a> · <a href="fee-calculator.html">Fee Calculator</a> · <a href="https://mgbaba.com/blog" target="_blank">Guides</a></p>
+        </div>
+    </div>
+
+    <script>
+    // Approximate monthly returns (simplified historical data)
+    const STOCK_DATA = {
+        TSLA: { annualReturn: 0.45, volatility: 0.55, name: "Tesla" },
+        NVDA: { annualReturn: 0.65, volatility: 0.50, name: "Nvidia" },
+        AAPL: { annualReturn: 0.25, volatility: 0.25, name: "Apple" },
+        MSFT: { annualReturn: 0.28, volatility: 0.22, name: "Microsoft" },
+        AMZN: { annualReturn: 0.30, volatility: 0.30, name: "Amazon" },
+        GOOGL: { annualReturn: 0.22, volatility: 0.25, name: "Google" },
+        META: { annualReturn: 0.35, volatility: 0.40, name: "Meta" },
+        SPY: { annualReturn: 0.12, volatility: 0.15, name: "S&P 500" },
+    };
+
+    // Deterministic pseudo-random based on stock seed for consistent results
+    function seededRandom(seed) {
+        let x = Math.sin(seed) * 10000;
+        return x - Math.floor(x);
+    }
+
+    function simulate() {
+        const ticker = document.getElementById('stock').value;
+        const monthly = parseFloat(document.getElementById('monthly').value) || 100;
+        const months = parseInt(document.getElementById('period').value);
+        const stock = STOCK_DATA[ticker];
+
+        const monthlyReturn = Math.pow(1 + stock.annualReturn, 1/12) - 1;
+        const monthlyVol = stock.volatility / Math.sqrt(12);
+
+        // Generate price path
+        let price = 100;
+        const prices = [price];
+        for (let i = 1; i <= months; i++) {
+            const noise = (seededRandom(i * 137 + ticker.charCodeAt(0)) - 0.5) * 2;
+            const ret = monthlyReturn + noise * monthlyVol;
+            price *= (1 + ret);
+            prices.push(Math.max(price, 10));
+        }
+
+        // DCA simulation
+        let dcaShares = 0;
+        let totalInvested = 0;
+        const dcaValues = [];
+        const investedValues = [];
+
+        for (let i = 0; i <= months; i++) {
+            if (i > 0) {
+                dcaShares += monthly / prices[i];
+                totalInvested += monthly;
+            }
+            dcaValues.push(dcaShares * prices[i]);
+            investedValues.push(totalInvested);
+        }
+
+        // Lump sum: invest all at month 0
+        const lumpSumTotal = monthly * months;
+        const lumpSumShares = lumpSumTotal / prices[0];
+        const lumpSumValues = prices.map(p => lumpSumShares * p);
+
+        const finalDCA = dcaValues[dcaValues.length - 1];
+        const finalLumpSum = lumpSumValues[lumpSumValues.length - 1];
+        const returnPct = ((finalDCA - totalInvested) / totalInvested * 100);
+        const lumpSumRetPct = ((finalLumpSum - lumpSumTotal) / lumpSumTotal * 100);
+
+        // Update stats
+        document.getElementById('totalInvested').textContent = '$' + totalInvested.toLocaleString();
+        document.getElementById('portfolioValue').textContent = '$' + Math.round(finalDCA).toLocaleString();
+        document.getElementById('totalReturn').textContent = (returnPct >= 0 ? '+' : '') + returnPct.toFixed(1) + '%';
+        document.getElementById('totalReturn').className = 'value ' + (returnPct >= 0 ? 'green' : '');
+
+        const dcaVsLump = finalDCA - finalLumpSum;
+        const vsEl = document.getElementById('vsLumpSum');
+        vsEl.textContent = (dcaVsLump >= 0 ? 'DCA wins by $' : 'Lump sum wins by $') + Math.abs(Math.round(dcaVsLump)).toLocaleString();
+        vsEl.className = 'value ' + (dcaVsLump >= 0 ? 'green' : '');
+
+        // Draw chart
+        drawChart(dcaValues, investedValues, lumpSumValues, months);
+
+        document.getElementById('results').classList.add('show');
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function drawChart(dcaValues, investedValues, lumpSumValues, months) {
+        const canvas = document.getElementById('chart');
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width - 40;
+        canvas.height = rect.height - 40;
+        const W = canvas.width;
+        const H = canvas.height;
+
+        ctx.clearRect(0, 0, W, H);
+
+        const allValues = [...dcaValues, ...investedValues, ...lumpSumValues];
+        const maxVal = Math.max(...allValues) * 1.1;
+        const minVal = 0;
+
+        function toX(i) { return (i / months) * (W - 20); }
+        function toY(v) { return H - ((v - minVal) / (maxVal - minVal)) * (H - 20); }
+
+        // Grid lines
+        ctx.strokeStyle = '#1e2550';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+            const y = H - (i / 4) * (H - 20);
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+            ctx.fillStyle = '#475569';
+            ctx.font = '11px sans-serif';
+            ctx.fillText('$' + Math.round(minVal + (maxVal - minVal) * i / 4).toLocaleString(), 2, y - 4);
+        }
+
+        // Lump sum line
+        ctx.strokeStyle = '#f59e0b88';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        lumpSumValues.forEach((v, i) => { i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v)); });
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Invested area
+        ctx.fillStyle = '#3b82f620';
+        ctx.beginPath();
+        ctx.moveTo(toX(0), toY(0));
+        investedValues.forEach((v, i) => ctx.lineTo(toX(i), toY(v)));
+        ctx.lineTo(toX(months), toY(0));
+        ctx.fill();
+
+        // Invested line
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        investedValues.forEach((v, i) => { i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v)); });
+        ctx.stroke();
+
+        // DCA area
+        ctx.fillStyle = '#22c55e15';
+        ctx.beginPath();
+        ctx.moveTo(toX(0), toY(0));
+        dcaValues.forEach((v, i) => ctx.lineTo(toX(i), toY(v)));
+        ctx.lineTo(toX(months), toY(0));
+        ctx.fill();
+
+        // DCA line
+        ctx.strokeStyle = '#22c55e';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        dcaValues.forEach((v, i) => { i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v)); });
+        ctx.stroke();
+    }
+
+    window.addEventListener('load', simulate);
+    window.addEventListener('resize', simulate);
+    </script>
+</body>
+</html>

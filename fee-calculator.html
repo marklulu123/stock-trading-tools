@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Trading Fee Calculator — Compare OKX, Binance, IBKR, eToro Fees</title>
+    <meta name="description" content="Calculate real stock trading costs: compare fees across OKX, Binance, Bitget, Interactive Brokers, and eToro. Includes spreads, funding rates, and withdrawal costs.">
+    <meta name="keywords" content="stock trading fees, OKX fees, Binance fees, IBKR fees, trading cost calculator, stock token fees">
+    <link rel="canonical" href="https://mgbaba.com/tools/investment-calculator">
+    <meta property="og:title" content="Stock Trading Fee Calculator — Compare Real Costs">
+    <meta property="og:description" content="Calculate and compare real trading costs across 5 platforms. Hidden fees revealed.">
+    <meta property="og:type" content="website">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0e27; color: #e0e6ff; min-height: 100vh; }
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+        h1 { font-size: 1.8rem; text-align: center; margin-bottom: 8px; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { text-align: center; color: #94a3b8; margin-bottom: 36px; }
+        .input-section { background: #131836; border: 1px solid #2d3470; border-radius: 16px; padding: 28px; margin-bottom: 28px; }
+        .input-section h2 { font-size: 1.1rem; margin-bottom: 20px; color: #f1f5f9; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 640px) { .input-grid { grid-template-columns: 1fr; } }
+        .input-group { display: flex; flex-direction: column; }
+        .input-group label { font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; }
+        .input-group input, .input-group select { background: #0d1025; border: 1px solid #2d3470; color: #e0e6ff; padding: 12px 16px; border-radius: 8px; font-size: 1rem; outline: none; transition: border-color 0.2s; }
+        .input-group input:focus, .input-group select:focus { border-color: #60a5fa; }
+        .btn { display: block; width: 100%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 14px; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 20px; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .results { display: none; }
+        .results.show { display: block; }
+        .results h2 { font-size: 1.2rem; margin-bottom: 20px; color: #f1f5f9; }
+        .platform-row { background: #131836; border: 1px solid #2d3470; border-radius: 12px; padding: 20px; margin-bottom: 12px; display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: center; transition: border-color 0.2s; }
+        .platform-row.cheapest { border-color: #22c55e; background: linear-gradient(145deg, #0d2818, #131836); }
+        .platform-name { font-weight: 700; font-size: 1.1rem; }
+        .platform-name small { display: block; font-weight: 400; font-size: 0.8rem; color: #94a3b8; }
+        .fees-breakdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        @media (max-width: 640px) { .platform-row { grid-template-columns: 1fr; } .fees-breakdown { grid-template-columns: 1fr 1fr; } }
+        .fee-item { text-align: center; }
+        .fee-item .label { font-size: 0.75rem; color: #64748b; }
+        .fee-item .value { font-size: 1rem; font-weight: 600; color: #e0e6ff; }
+        .fee-item .total { color: #60a5fa; font-size: 1.2rem; }
+        .cheapest .fee-item .total { color: #22c55e; }
+        .tag { display: inline-block; background: #14532d; color: #22c55e; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; margin-top: 4px; }
+        .savings-banner { background: linear-gradient(135deg, #14532d, #0d2818); border: 1px solid #22c55e40; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px; }
+        .savings-banner .big { font-size: 2rem; font-weight: 800; color: #22c55e; }
+        .savings-banner p { color: #94a3b8; margin-top: 4px; }
+        .cta-box { background: linear-gradient(145deg, #1e1b4b, #1a1f45); border: 1px solid #4338ca; border-radius: 12px; padding: 24px; text-align: center; margin-top: 28px; }
+        .cta-box h3 { color: #f1f5f9; margin-bottom: 8px; }
+        .cta-box p { color: #94a3b8; margin-bottom: 16px; }
+        .cta-box a { display: inline-block; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+        .note { font-size: 0.8rem; color: #64748b; text-align: center; margin-top: 20px; line-height: 1.5; }
+        .footer { text-align: center; margin-top: 48px; padding-top: 20px; border-top: 1px solid #1e2550; color: #64748b; font-size: 0.85rem; }
+        .footer a { color: #60a5fa; text-decoration: none; }
+        .back { display: inline-block; color: #60a5fa; text-decoration: none; margin-bottom: 20px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">← All Tools</a>
+        <h1>Stock Trading Fee Calculator</h1>
+        <p class="subtitle">Compare real costs across 5 platforms — including hidden fees</p>
+
+        <div class="input-section">
+            <h2>Your Trade Details</h2>
+            <div class="input-grid">
+                <div class="input-group">
+                    <label>Investment Amount (USD)</label>
+                    <input type="number" id="amount" value="1000" min="1" max="1000000">
+                </div>
+                <div class="input-group">
+                    <label>Holding Period</label>
+                    <select id="holdDays">
+                        <option value="1">1 day (day trade)</option>
+                        <option value="7">1 week</option>
+                        <option value="30" selected>1 month</option>
+                        <option value="90">3 months</option>
+                        <option value="180">6 months</option>
+                        <option value="365">1 year</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Deposit Method</label>
+                    <select id="depositMethod">
+                        <option value="crypto">Crypto (USDT)</option>
+                        <option value="wire">Bank Wire</option>
+                        <option value="card">Credit/Debit Card</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Want to Withdraw Profits?</label>
+                    <select id="withdraw">
+                        <option value="yes" selected>Yes, to bank account</option>
+                        <option value="no">No, keep on platform</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn" onclick="calculate()">Calculate Real Costs</button>
+        </div>
+
+        <div class="results" id="results">
+            <div class="savings-banner" id="savingsBanner">
+                <div class="big" id="savingsAmount">$0</div>
+                <p id="savingsText">potential savings with the cheapest platform</p>
+            </div>
+
+            <h2>Fee Breakdown by Platform</h2>
+            <div id="platformResults"></div>
+
+            <div class="cta-box">
+                <h3>Ready to Start Trading?</h3>
+                <p>Step-by-step guides for 100+ countries — no broker, no SSN needed</p>
+                <a href="https://mgbaba.com/blog/buy-us-stocks-without-broker-kyc" target="_blank">Read the Complete Guide →</a>
+            </div>
+
+            <p class="note">
+                * Fees based on official fee schedules as of March 2026. OKX funding rate: ~0.03%/8h average.
+                IBKR commission: $1 minimum. eToro spread: ~0.15%. Actual costs may vary.<br>
+                Data source: <a href="https://mgbaba.com/blog/hidden-fees-crypto-stock-trading-real-cost-2026" target="_blank" style="color:#60a5fa">MGBABA Hidden Fees Analysis</a>
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>Built by <a href="https://mgbaba.com" target="_blank">MGBABA</a> — Buy 50+ US Stocks from $1, No Broker Needed</p>
+            <p style="margin-top: 6px;"><a href="https://mgbaba.com/compare" target="_blank">Full Platform Comparison</a> · <a href="https://mgbaba.com/blog" target="_blank">Trading Guides</a> · <a href="https://mgbaba.com/tools/investment-calculator" target="_blank">Investment Calculator</a></p>
+        </div>
+    </div>
+
+    <script>
+    const PLATFORMS = {
+        okx: {
+            name: 'OKX', sub: 'Stock Tokens',
+            tradingFee: 0.0005, // 0.05% taker
+            fundingRate: 0.0003, // 0.03% per 8h
+            spreadPct: 0.001, // ~0.1%
+            depositFee: { crypto: 0, wire: 0, card: 0.035 },
+            withdrawFee: { crypto: 1, wire: 25, card: 1 }, // USDT TRC20 ~$1
+            minDeposit: 1,
+        },
+        binance: {
+            name: 'Binance', sub: 'Ondo Tokens',
+            tradingFee: 0.001, // 0.1% taker
+            fundingRate: 0.0003,
+            spreadPct: 0.0015,
+            depositFee: { crypto: 0, wire: 0, card: 0.02 },
+            withdrawFee: { crypto: 1, wire: 25, card: 1 },
+            minDeposit: 1,
+        },
+        bitget: {
+            name: 'Bitget', sub: 'Stock Tokens',
+            tradingFee: 0.0006,
+            fundingRate: 0.0003,
+            spreadPct: 0.0012,
+            depositFee: { crypto: 0, wire: 0, card: 0.035 },
+            withdrawFee: { crypto: 1, wire: 25, card: 1 },
+            minDeposit: 1,
+        },
+        ibkr: {
+            name: 'IBKR', sub: 'Interactive Brokers',
+            tradingFee: 0, // commission-based, handled below
+            fundingRate: 0,
+            spreadPct: 0.0005,
+            depositFee: { crypto: 999, wire: 0, card: 999 }, // no crypto
+            withdrawFee: { crypto: 999, wire: 10, card: 999 },
+            minDeposit: 0,
+            commission: 1, // $1 minimum
+        },
+        etoro: {
+            name: 'eToro', sub: 'Social Trading',
+            tradingFee: 0,
+            fundingRate: 0,
+            spreadPct: 0.0015,
+            depositFee: { crypto: 999, wire: 0, card: 0 },
+            withdrawFee: { crypto: 999, wire: 5, card: 5 },
+            minDeposit: 50,
+            withdrawMinFee: 5,
+        },
+    };
+
+    function calculate() {
+        const amount = parseFloat(document.getElementById('amount').value) || 1000;
+        const holdDays = parseInt(document.getElementById('holdDays').value);
+        const depositMethod = document.getElementById('depositMethod').value;
+        const withdraw = document.getElementById('withdraw').value === 'yes';
+
+        const results = [];
+
+        for (const [key, p] of Object.entries(PLATFORMS)) {
+            const depositFee = p.depositFee[depositMethod];
+            if (depositFee >= 999) {
+                results.push({ key, name: p.name, sub: p.sub, available: false });
+                continue;
+            }
+
+            const depositCost = amount * (depositFee || 0);
+            const spreadCost = amount * p.spreadPct;
+            const tradingCost = p.commission ? Math.max(p.commission, amount * 0.0005) : amount * p.tradingFee;
+
+            // Funding rate: 3x per day for crypto platforms
+            const fundingCost = amount * p.fundingRate * 3 * holdDays;
+
+            let withdrawCost = 0;
+            if (withdraw) {
+                const wFee = p.withdrawFee[depositMethod === 'crypto' ? 'crypto' : 'wire'];
+                withdrawCost = wFee >= 999 ? 0 : wFee;
+                if (p.withdrawMinFee) withdrawCost = Math.max(withdrawCost, p.withdrawMinFee);
+            }
+
+            const total = depositCost + spreadCost + tradingCost + fundingCost + withdrawCost;
+            const pct = (total / amount * 100);
+
+            results.push({
+                key, name: p.name, sub: p.sub, available: true,
+                depositCost, spreadCost, tradingCost, fundingCost, withdrawCost,
+                total, pct,
+            });
+        }
+
+        // Sort by total cost
+        const available = results.filter(r => r.available).sort((a, b) => a.total - b.total);
+        const unavailable = results.filter(r => !r.available);
+
+        // Savings banner
+        if (available.length >= 2) {
+            const savings = available[available.length - 1].total - available[0].total;
+            document.getElementById('savingsAmount').textContent = '$' + savings.toFixed(2);
+            document.getElementById('savingsText').textContent =
+                `Save ${savings.toFixed(2)} USD by using ${available[0].name} instead of ${available[available.length - 1].name}`;
+        }
+
+        // Render results
+        const container = document.getElementById('platformResults');
+        container.innerHTML = '';
+
+        available.forEach((r, i) => {
+            const div = document.createElement('div');
+            div.className = 'platform-row' + (i === 0 ? ' cheapest' : '');
+            div.innerHTML = `
+                <div class="platform-name">
+                    ${r.name}
+                    <small>${r.sub}</small>
+                    ${i === 0 ? '<span class="tag">CHEAPEST</span>' : ''}
+                </div>
+                <div class="fees-breakdown">
+                    <div class="fee-item"><div class="label">Trading + Spread</div><div class="value">$${(r.tradingCost + r.spreadCost).toFixed(2)}</div></div>
+                    <div class="fee-item"><div class="label">Funding (${holdDays}d)</div><div class="value">$${r.fundingCost.toFixed(2)}</div></div>
+                    <div class="fee-item"><div class="label">Deposit + Withdraw</div><div class="value">$${(r.depositCost + r.withdrawCost).toFixed(2)}</div></div>
+                    <div class="fee-item"><div class="label">TOTAL COST</div><div class="value total">$${r.total.toFixed(2)} (${r.pct.toFixed(2)}%)</div></div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+
+        unavailable.forEach(r => {
+            const div = document.createElement('div');
+            div.className = 'platform-row';
+            div.style.opacity = '0.5';
+            div.innerHTML = `
+                <div class="platform-name">${r.name}<small>${r.sub}</small></div>
+                <div style="color:#64748b;padding:8px;">Not available with ${depositMethod === 'crypto' ? 'crypto' : depositMethod === 'wire' ? 'bank wire' : 'card'} deposit</div>
+            `;
+            container.appendChild(div);
+        });
+
+        document.getElementById('results').classList.add('show');
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Auto-calculate on load
+    window.addEventListener('load', calculate);
+    </script>
+</body>
+</html>

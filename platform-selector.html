@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Which Stock Trading Platform Should I Use? — Free Quiz</title>
+    <meta name="description" content="Answer 5 quick questions to find the best platform for buying US stocks. Personalized recommendation for your country, budget, and trading style.">
+    <meta name="keywords" content="best stock trading platform, OKX vs Binance, best crypto exchange for stocks, which platform should I use">
+    <link rel="canonical" href="https://mgbaba.com/compare">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0e27; color: #e0e6ff; min-height: 100vh; }
+        .container { max-width: 720px; margin: 0 auto; padding: 32px 20px; }
+        h1 { font-size: 1.8rem; text-align: center; margin-bottom: 8px; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { text-align: center; color: #94a3b8; margin-bottom: 36px; }
+        .progress { background: #1a1f45; border-radius: 8px; height: 6px; margin-bottom: 32px; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, #3b82f6, #8b5cf6); height: 100%; transition: width 0.4s ease; border-radius: 8px; }
+        .question-card { background: #131836; border: 1px solid #2d3470; border-radius: 16px; padding: 32px; }
+        .question-card h2 { font-size: 1.2rem; margin-bottom: 6px; color: #f1f5f9; }
+        .question-card .q-sub { color: #94a3b8; font-size: 0.9rem; margin-bottom: 24px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option { background: #0d1025; border: 2px solid #2d3470; border-radius: 12px; padding: 16px 20px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px; }
+        .option:hover { border-color: #60a5fa; background: #131836; }
+        .option.selected { border-color: #8b5cf6; background: #1e1b4b; }
+        .option .icon { font-size: 1.4rem; }
+        .option .text { flex: 1; }
+        .option .text strong { display: block; color: #f1f5f9; margin-bottom: 2px; }
+        .option .text small { color: #94a3b8; font-size: 0.85rem; }
+        .result-card { display: none; }
+        .result-card.show { display: block; }
+        .result-card h2 { font-size: 1.5rem; margin-bottom: 4px; }
+        .result-card .match { color: #22c55e; font-size: 1rem; margin-bottom: 20px; }
+        .rec-box { background: linear-gradient(145deg, #0d2818, #131836); border: 1px solid #22c55e40; border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+        .rec-box h3 { color: #22c55e; font-size: 1.3rem; margin-bottom: 4px; }
+        .rec-box .rec-sub { color: #94a3b8; margin-bottom: 16px; }
+        .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 500px) { .pros-cons { grid-template-columns: 1fr; } }
+        .pros h4 { color: #22c55e; margin-bottom: 8px; }
+        .cons h4 { color: #f59e0b; margin-bottom: 8px; }
+        .pros li, .cons li { color: #cbd5e1; font-size: 0.9rem; margin-bottom: 4px; list-style: none; padding-left: 16px; position: relative; }
+        .pros li::before { content: "+"; position: absolute; left: 0; color: #22c55e; font-weight: bold; }
+        .cons li::before { content: "−"; position: absolute; left: 0; color: #f59e0b; font-weight: bold; }
+        .alt-box { background: #131836; border: 1px solid #2d3470; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+        .alt-box h4 { color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; }
+        .alt-box .alt-name { font-weight: 700; color: #f1f5f9; }
+        .cta-btn { display: block; text-align: center; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 14px 28px; border-radius: 10px; text-decoration: none; font-weight: 600; margin-top: 20px; }
+        .restart { display: block; text-align: center; color: #60a5fa; margin-top: 16px; cursor: pointer; font-size: 0.9rem; background: none; border: none; }
+        .footer { text-align: center; margin-top: 48px; padding-top: 20px; border-top: 1px solid #1e2550; color: #64748b; font-size: 0.85rem; }
+        .footer a { color: #60a5fa; text-decoration: none; }
+        .back { display: inline-block; color: #60a5fa; text-decoration: none; margin-bottom: 20px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">← All Tools</a>
+        <h1>Find Your Perfect Trading Platform</h1>
+        <p class="subtitle">Answer 5 questions — get a personalized recommendation</p>
+
+        <div class="progress"><div class="progress-bar" id="progressBar" style="width: 0%"></div></div>
+
+        <div id="quiz">
+            <div class="question-card" id="questionCard"></div>
+        </div>
+
+        <div class="result-card" id="resultCard">
+            <div class="question-card">
+                <h2 id="resultTitle"></h2>
+                <p class="match" id="resultMatch"></p>
+                <div class="rec-box" id="recBox"></div>
+                <div class="alt-box" id="altBox"></div>
+                <a class="cta-btn" id="ctaLink" href="#" target="_blank">Read Full Setup Guide →</a>
+                <button class="restart" onclick="restart()">↺ Start Over</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Built by <a href="https://mgbaba.com" target="_blank">MGBABA</a> — Buy US Stocks from Anywhere, from $1</p>
+            <p style="margin-top: 6px;"><a href="https://mgbaba.com/compare" target="_blank">Full Comparison</a> · <a href="fee-calculator.html">Fee Calculator</a></p>
+        </div>
+    </div>
+
+    <script>
+    const QUESTIONS = [
+        {
+            q: "Where are you located?",
+            sub: "This affects which platforms are available to you",
+            options: [
+                { icon: "🇺🇸", label: "United States", detail: "US resident with SSN", value: "us" },
+                { icon: "🇨🇳", label: "China / Hong Kong", detail: "Mainland or HK resident", value: "china" },
+                { icon: "🌏", label: "Southeast Asia", detail: "Vietnam, Philippines, Indonesia, etc.", value: "sea" },
+                { icon: "🌍", label: "Other country", detail: "Europe, Africa, Latin America, etc.", value: "other" },
+            ]
+        },
+        {
+            q: "How much do you want to invest?",
+            sub: "Starting amount matters for fee efficiency",
+            options: [
+                { icon: "💵", label: "$1 – $100", detail: "Just testing the waters", value: "tiny" },
+                { icon: "💰", label: "$100 – $1,000", detail: "Casual investing", value: "small" },
+                { icon: "🏦", label: "$1,000 – $10,000", detail: "Serious portfolio", value: "medium" },
+                { icon: "🏛️", label: "$10,000+", detail: "Large investment", value: "large" },
+            ]
+        },
+        {
+            q: "What's your experience level?",
+            sub: "We'll recommend the right complexity level",
+            options: [
+                { icon: "🌱", label: "Complete beginner", detail: "Never traded stocks before", value: "beginner" },
+                { icon: "📈", label: "Some experience", detail: "Used a trading app before", value: "intermediate" },
+                { icon: "🧠", label: "Advanced trader", detail: "Know about leverage, options, etc.", value: "advanced" },
+            ]
+        },
+        {
+            q: "How do you want to deposit money?",
+            sub: "Payment method affects available platforms",
+            options: [
+                { icon: "🪙", label: "Crypto (USDT, BTC)", detail: "Already have crypto", value: "crypto" },
+                { icon: "🏧", label: "Bank transfer / wire", detail: "From my bank account", value: "wire" },
+                { icon: "💳", label: "Credit / debit card", detail: "Visa, Mastercard", value: "card" },
+                { icon: "📱", label: "Local payment app", detail: "GCash, Dana, MoMo, etc.", value: "local" },
+            ]
+        },
+        {
+            q: "What's most important to you?",
+            sub: "Your priority helps narrow the choice",
+            options: [
+                { icon: "💸", label: "Lowest fees", detail: "I want to pay as little as possible", value: "fees" },
+                { icon: "🛡️", label: "Safety & regulation", detail: "I want maximum protection", value: "safety" },
+                { icon: "⚡", label: "Easy to start", detail: "I want the simplest setup", value: "easy" },
+                { icon: "📊", label: "Most features", detail: "Advanced tools, leverage, etc.", value: "features" },
+            ]
+        }
+    ];
+
+    const PLATFORMS_DB = {
+        okx: {
+            name: "OKX",
+            tagline: "Best for international investors who want low fees and wide stock selection",
+            pros: ["Lowest trading fees (0.05%)", "50+ US stocks available", "24/7 trading", "P2P deposit in 100+ countries", "From $1 minimum"],
+            cons: ["Not available in US", "Crypto-based (need USDT)", "Funding rates on long holds", "No dividend payments"],
+            guide: "https://mgbaba.com/blog/okx-stock-tokens-complete-tutorial",
+        },
+        binance: {
+            name: "Binance",
+            tagline: "Largest exchange with Ondo tokenized securities partnership",
+            pros: ["Most trusted brand in crypto", "Ondo partnership for real backing", "Low fees with BNB discount", "Huge liquidity"],
+            cons: ["Fewer stock tokens than OKX", "Not available in US", "More complex interface", "Regulatory concerns in some countries"],
+            guide: "https://mgbaba.com/blog/okx-vs-binance-stock-tokens-2026",
+        },
+        bitget: {
+            name: "Bitget",
+            tagline: "Good copy trading features with competitive fees",
+            pros: ["Copy trading from top performers", "Competitive fees", "Good mobile app", "Growing stock selection"],
+            cons: ["Smaller than OKX/Binance", "Less liquidity", "Newer to stock tokens", "Limited advanced tools"],
+            guide: "https://mgbaba.com/blog/cheapest-crypto-exchange-lowest-fees-2026",
+        },
+        ibkr: {
+            name: "Interactive Brokers",
+            tagline: "Best traditional broker for serious international investors",
+            pros: ["Real stock ownership", "Dividend payments", "Highly regulated (SEC/FINRA)", "Massive stock selection"],
+            cons: ["Complex account opening", "$1 minimum commission", "Wire transfer only", "KYC can take 1-2 weeks"],
+            guide: "https://mgbaba.com/blog/okx-vs-interactive-brokers-fees",
+        },
+        etoro: {
+            name: "eToro",
+            tagline: "Simplest interface for beginners, social trading features",
+            pros: ["Very beginner-friendly", "Social/copy trading", "Real stocks (no tokens)", "Regulated in multiple countries"],
+            cons: ["Higher spreads (~0.15%)", "$50 minimum deposit", "$5 withdrawal fee", "Limited in some countries"],
+            guide: "https://mgbaba.com/blog/okx-vs-etoro-stock-trading",
+        },
+    };
+
+    let currentQ = 0;
+    let answers = [];
+
+    function renderQuestion() {
+        const q = QUESTIONS[currentQ];
+        document.getElementById('progressBar').style.width = ((currentQ) / QUESTIONS.length * 100) + '%';
+        document.getElementById('questionCard').innerHTML = `
+            <h2>${q.q}</h2>
+            <p class="q-sub">${q.sub}</p>
+            <div class="options">
+                ${q.options.map((o, i) => `
+                    <div class="option" onclick="selectOption('${o.value}', this)">
+                        <div class="icon">${o.icon}</div>
+                        <div class="text"><strong>${o.label}</strong><small>${o.detail}</small></div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    function selectOption(value, el) {
+        // Visual feedback
+        el.closest('.options').querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+
+        answers[currentQ] = value;
+
+        setTimeout(() => {
+            currentQ++;
+            if (currentQ < QUESTIONS.length) {
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }, 300);
+    }
+
+    function showResult() {
+        document.getElementById('progressBar').style.width = '100%';
+        const [location, budget, experience, deposit, priority] = answers;
+
+        // Score each platform
+        const scores = { okx: 0, binance: 0, bitget: 0, ibkr: 0, etoro: 0 };
+
+        // Location
+        if (location === 'us') { scores.ibkr += 5; scores.etoro += 3; scores.okx -= 10; scores.binance -= 10; scores.bitget -= 10; }
+        if (location === 'china') { scores.okx += 3; scores.ibkr += 2; scores.binance -= 2; }
+        if (location === 'sea') { scores.okx += 4; scores.binance += 3; scores.bitget += 2; }
+        if (location === 'other') { scores.okx += 3; scores.binance += 2; scores.etoro += 2; }
+
+        // Budget
+        if (budget === 'tiny' || budget === 'small') { scores.okx += 3; scores.bitget += 2; scores.ibkr -= 2; }
+        if (budget === 'medium') { scores.okx += 2; scores.binance += 2; scores.ibkr += 1; }
+        if (budget === 'large') { scores.ibkr += 4; scores.okx += 1; scores.binance += 1; }
+
+        // Experience
+        if (experience === 'beginner') { scores.etoro += 3; scores.okx += 1; scores.ibkr -= 1; }
+        if (experience === 'intermediate') { scores.okx += 2; scores.binance += 2; }
+        if (experience === 'advanced') { scores.okx += 2; scores.ibkr += 3; scores.binance += 2; }
+
+        // Deposit
+        if (deposit === 'crypto') { scores.okx += 4; scores.binance += 3; scores.bitget += 3; scores.ibkr -= 3; scores.etoro -= 3; }
+        if (deposit === 'wire') { scores.ibkr += 3; scores.etoro += 2; scores.okx += 1; }
+        if (deposit === 'card') { scores.etoro += 3; scores.okx += 1; scores.binance += 1; }
+        if (deposit === 'local') { scores.okx += 3; scores.binance += 2; }
+
+        // Priority
+        if (priority === 'fees') { scores.okx += 4; scores.bitget += 2; }
+        if (priority === 'safety') { scores.ibkr += 5; scores.etoro += 3; scores.binance += 1; }
+        if (priority === 'easy') { scores.etoro += 4; scores.okx += 2; }
+        if (priority === 'features') { scores.okx += 3; scores.ibkr += 3; scores.binance += 2; }
+
+        // Sort
+        const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+        const best = PLATFORMS_DB[sorted[0][0]];
+        const alt = PLATFORMS_DB[sorted[1][0]];
+
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('resultCard').classList.add('show');
+
+        document.getElementById('resultTitle').textContent = `Your Best Match: ${best.name}`;
+        document.getElementById('resultMatch').textContent = best.tagline;
+        document.getElementById('recBox').innerHTML = `
+            <h3>${best.name}</h3>
+            <p class="rec-sub">${best.tagline}</p>
+            <div class="pros-cons">
+                <div class="pros"><h4>Why it's great for you</h4><ul>${best.pros.map(p => `<li>${p}</li>`).join('')}</ul></div>
+                <div class="cons"><h4>Watch out for</h4><ul>${best.cons.map(c => `<li>${c}</li>`).join('')}</ul></div>
+            </div>
+        `;
+        document.getElementById('altBox').innerHTML = `
+            <h4>Runner-up</h4>
+            <p><span class="alt-name">${alt.name}</span> — ${alt.tagline}</p>
+        `;
+        document.getElementById('ctaLink').href = best.guide;
+        document.getElementById('ctaLink').textContent = `Read ${best.name} Setup Guide →`;
+    }
+
+    function restart() {
+        currentQ = 0;
+        answers = [];
+        document.getElementById('quiz').style.display = 'block';
+        document.getElementById('resultCard').classList.remove('show');
+        renderQuestion();
+    }
+
+    renderQuestion();
+    </script>
+</body>
+</html>
