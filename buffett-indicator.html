@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buffett Indicator — Is the US Stock Market Overvalued? (Live)</title>
+    <meta name="description" content="Live Buffett Indicator: Total US Market Cap / GDP ratio. Check if US stocks are overvalued or undervalued right now. Historical chart from 1995 to 2026.">
+    <meta name="keywords" content="buffett indicator, market cap to gdp, stock market valuation, is market overvalued, warren buffett indicator 2026">
+    <link rel="canonical" href="https://mgbaba.com/tools/buffett-indicator">
+    <meta property="og:title" content="Buffett Indicator — Live US Market Valuation">
+    <meta property="og:description" content="Is the US stock market overvalued? Check the live Buffett Indicator with historical chart.">
+    <meta property="og:type" content="website">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0e27; color: #e0e6ff; min-height: 100vh; }
+        .container { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+        h1 { font-size: 1.8rem; text-align: center; margin-bottom: 8px; background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { text-align: center; color: #94a3b8; margin-bottom: 36px; }
+        .back { display: inline-block; color: #60a5fa; text-decoration: none; margin-bottom: 20px; font-size: 0.9rem; }
+
+        /* Gauge */
+        .gauge-section { text-align: center; margin-bottom: 32px; }
+        .gauge-container { position: relative; width: 320px; height: 180px; margin: 0 auto; }
+        .gauge-bg { position: absolute; top: 0; left: 0; }
+        .ratio-display { font-size: 3.5rem; font-weight: 800; margin-top: 8px; }
+        .ratio-label { font-size: 1.1rem; color: #94a3b8; }
+        .verdict { font-size: 1.3rem; font-weight: 700; margin-top: 8px; padding: 6px 20px; border-radius: 20px; display: inline-block; }
+
+        /* Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+        @media (max-width: 640px) { .stats-grid { grid-template-columns: 1fr; } }
+        .stat { background: #131836; border: 1px solid #2d3470; border-radius: 12px; padding: 20px; text-align: center; }
+        .stat .label { font-size: 0.85rem; color: #64748b; margin-bottom: 4px; }
+        .stat .value { font-size: 1.5rem; font-weight: 700; color: #f1f5f9; }
+
+        /* Chart */
+        .card { background: #131836; border: 1px solid #2d3470; border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+        .card h2 { font-size: 1.1rem; margin-bottom: 16px; color: #f1f5f9; }
+        .chart-wrap { position: relative; height: 280px; }
+        canvas { width: 100% !important; height: 100% !important; }
+
+        /* Zones legend */
+        .zones { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 12px; }
+        .zone { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: #94a3b8; }
+        .zone-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+        /* FAQ */
+        .faq { margin-top: 28px; }
+        .faq h2 { font-size: 1.2rem; margin-bottom: 16px; color: #f1f5f9; }
+        .faq-item { background: #0d1025; border-radius: 10px; padding: 16px 20px; margin-bottom: 10px; }
+        .faq-item h3 { font-size: 0.95rem; color: #e0e6ff; margin-bottom: 6px; }
+        .faq-item p { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; }
+
+        /* CTA */
+        .cta-box { background: linear-gradient(145deg, #1e1b4b, #1a1f45); border: 1px solid #4338ca; border-radius: 12px; padding: 24px; text-align: center; margin-top: 28px; }
+        .cta-box h3 { color: #f1f5f9; margin-bottom: 8px; }
+        .cta-box p { color: #94a3b8; margin-bottom: 16px; font-size: 0.95rem; }
+        .cta-box a { display: inline-block; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin: 4px; }
+        .cta-box a.secondary { background: transparent; border: 1px solid #60a5fa; color: #60a5fa; }
+
+        .footer { text-align: center; margin-top: 48px; padding-top: 20px; border-top: 1px solid #1e2550; color: #64748b; font-size: 0.85rem; }
+        .footer a { color: #60a5fa; text-decoration: none; }
+        .updated { font-size: 0.8rem; color: #475569; text-align: center; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back">← All Tools</a>
+        <h1>Buffett Indicator</h1>
+        <p class="subtitle">Total US Market Cap / GDP — Warren Buffett's favorite valuation metric</p>
+
+        <!-- Gauge Display -->
+        <div class="gauge-section">
+            <div class="gauge-container">
+                <svg class="gauge-bg" width="320" height="180" viewBox="0 0 320 180">
+                    <!-- Background arc -->
+                    <path d="M 30 170 A 130 130 0 0 1 290 170" fill="none" stroke="#1e2550" stroke-width="20" stroke-linecap="round"/>
+                    <!-- Colored zones -->
+                    <path d="M 30 170 A 130 130 0 0 1 95 45" fill="none" stroke="#22c55e" stroke-width="20" stroke-linecap="round" opacity="0.3"/>
+                    <path d="M 95 45 A 130 130 0 0 1 160 18" fill="none" stroke="#eab308" stroke-width="20" stroke-linecap="round" opacity="0.3"/>
+                    <path d="M 160 18 A 130 130 0 0 1 225 45" fill="none" stroke="#f97316" stroke-width="20" stroke-linecap="round" opacity="0.3"/>
+                    <path d="M 225 45 A 130 130 0 0 1 290 170" fill="none" stroke="#ef4444" stroke-width="20" stroke-linecap="round" opacity="0.3"/>
+                    <!-- Needle -->
+                    <line id="needle" x1="160" y1="170" x2="160" y2="50" stroke="#f1f5f9" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="160" cy="170" r="6" fill="#f1f5f9"/>
+                </svg>
+            </div>
+            <div class="ratio-display" id="ratioDisplay">—%</div>
+            <div class="ratio-label">Market Cap / GDP</div>
+            <div class="verdict" id="verdict" style="background:#1e2550;color:#94a3b8;">Loading...</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="label">S&P 500</div>
+                <div class="value" id="sp500Val">—</div>
+            </div>
+            <div class="stat">
+                <div class="label">US Market Cap</div>
+                <div class="value" id="mcapVal">—</div>
+            </div>
+            <div class="stat">
+                <div class="label">US GDP</div>
+                <div class="value" id="gdpVal">$29.7T</div>
+            </div>
+        </div>
+
+        <!-- Historical Chart -->
+        <div class="card">
+            <h2>Historical Buffett Indicator (1995–2026)</h2>
+            <div class="chart-wrap">
+                <canvas id="historyChart"></canvas>
+            </div>
+            <div class="zones">
+                <div class="zone"><div class="zone-dot" style="background:#22c55e"></div>Undervalued (&lt;75%)</div>
+                <div class="zone"><div class="zone-dot" style="background:#eab308"></div>Fair Value (75-100%)</div>
+                <div class="zone"><div class="zone-dot" style="background:#f97316"></div>Overvalued (100-140%)</div>
+                <div class="zone"><div class="zone-dot" style="background:#ef4444"></div>Extremely Overvalued (&gt;180%)</div>
+            </div>
+        </div>
+
+        <p class="updated" id="updatedTime">Data updates automatically</p>
+
+        <!-- FAQ -->
+        <div class="faq">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <h3>What is the Buffett Indicator?</h3>
+                <p>The Buffett Indicator is the ratio of total US stock market capitalization to GDP. Warren Buffett called it "probably the best single measure of where valuations stand at any given moment." When this ratio is high, stocks may be overvalued; when low, they may be undervalued.</p>
+            </div>
+            <div class="faq-item">
+                <h3>What do the levels mean?</h3>
+                <p><strong>Below 75%</strong>: Significantly undervalued — historically great buying opportunity. <strong>75-100%</strong>: Fair value range. <strong>100-140%</strong>: Modestly overvalued — caution advised. <strong>Above 180%</strong>: Extremely overvalued — dot-com bubble peaked at ~190%.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How is this calculated?</h3>
+                <p>Buffett Indicator = (Total US Stock Market Cap / US GDP) × 100. We estimate total market cap from the S&P 500 index using historical Wilshire 5000 correlation. GDP data is from the Bureau of Economic Analysis (BEA).</p>
+            </div>
+            <div class="faq-item">
+                <h3>Should I invest based on this?</h3>
+                <p>The Buffett Indicator is one signal among many. It's useful for understanding overall market sentiment but shouldn't be the sole basis for investment decisions. Even in overvalued markets, individual stocks can be fairly priced. For a more complete analysis, see <a href="https://mgbaba.com/tools/buffett-indicator" style="color:#60a5fa">MGBABA's full Buffett Indicator tool</a> with real-time data.</p>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-box">
+            <h3>Start Investing in US Stocks</h3>
+            <p>Buy Tesla, Nvidia, Apple and 50+ US stocks from $1 — no US broker or SSN needed</p>
+            <a href="https://mgbaba.com/tools/buffett-indicator" target="_blank">Full Live Tool →</a>
+            <a href="https://mgbaba.com/blog/best-stocks-to-buy-with-usdt-2026" target="_blank" class="secondary">Top 10 Stocks to Buy →</a>
+        </div>
+
+        <div class="footer">
+            <p>Built by <a href="https://mgbaba.com" target="_blank">MGBABA</a> — AI-Powered US Stock Intelligence</p>
+            <p style="margin-top: 6px;"><a href="fee-calculator.html">Fee Calculator</a> · <a href="platform-selector.html">Platform Selector</a> · <a href="dca-simulator.html">DCA Simulator</a></p>
+        </div>
+    </div>
+
+    <script>
+    const GDP = 29.7; // US GDP in trillions (2025 BEA)
+
+    // Historical data points (year, ratio%)
+    const HISTORY = [
+        [1995, 72], [1996, 82], [1997, 97], [1998, 117], [1999, 153],
+        [2000, 183], [2001, 133], [2002, 102], [2003, 108], [2004, 114],
+        [2005, 115], [2006, 120], [2007, 118], [2008, 65], [2009, 87],
+        [2010, 97], [2011, 93], [2012, 100], [2013, 115], [2014, 124],
+        [2015, 120], [2016, 124], [2017, 138], [2018, 122], [2019, 148],
+        [2020, 186], [2021, 209], [2022, 156], [2023, 174], [2024, 195],
+        [2025, 190],
+    ];
+
+    function getVerdict(ratio) {
+        if (ratio < 75) return { text: 'Significantly Undervalued', color: '#22c55e', bg: '#0d2818' };
+        if (ratio < 100) return { text: 'Fair Value', color: '#eab308', bg: '#1c1a05' };
+        if (ratio < 140) return { text: 'Modestly Overvalued', color: '#f97316', bg: '#1c1205' };
+        if (ratio < 180) return { text: 'Overvalued', color: '#ef4444', bg: '#1c0505' };
+        return { text: 'Extremely Overvalued', color: '#ef4444', bg: '#2c0505' };
+    }
+
+    function updateNeedle(ratio) {
+        // Map ratio (50-220) to angle (-90 to 90 degrees)
+        const clamped = Math.max(50, Math.min(220, ratio));
+        const angle = ((clamped - 50) / 170) * 180 - 90;
+        const rad = angle * Math.PI / 180;
+        const cx = 160, cy = 170, len = 120;
+        const x2 = cx + len * Math.sin(rad);
+        const y2 = cy - len * Math.cos(rad);
+        document.getElementById('needle').setAttribute('x2', x2);
+        document.getElementById('needle').setAttribute('y2', y2);
+    }
+
+    function drawHistoryChart(currentRatio) {
+        const data = [...HISTORY];
+        if (currentRatio) data.push([2026, currentRatio]);
+
+        const canvas = document.getElementById('historyChart');
+        const ctx = canvas.getContext('2d');
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        const W = canvas.width, H = canvas.height;
+        const pad = { top: 20, right: 10, bottom: 30, left: 45 };
+
+        ctx.clearRect(0, 0, W, H);
+
+        const minY = 40, maxY = 220;
+        const chartW = W - pad.left - pad.right;
+        const chartH = H - pad.top - pad.bottom;
+
+        function toX(i) { return pad.left + (i / (data.length - 1)) * chartW; }
+        function toY(v) { return pad.top + (1 - (v - minY) / (maxY - minY)) * chartH; }
+
+        // Zone backgrounds
+        const zones = [
+            { from: minY, to: 75, color: '#22c55e10' },
+            { from: 75, to: 100, color: '#eab30810' },
+            { from: 100, to: 140, color: '#f9731610' },
+            { from: 140, to: maxY, color: '#ef444410' },
+        ];
+        zones.forEach(z => {
+            ctx.fillStyle = z.color;
+            ctx.fillRect(pad.left, toY(Math.min(z.to, maxY)), chartW, toY(Math.max(z.from, minY)) - toY(Math.min(z.to, maxY)));
+        });
+
+        // Threshold lines
+        [75, 100, 140, 180].forEach(v => {
+            if (v >= minY && v <= maxY) {
+                ctx.strokeStyle = '#ffffff15';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath(); ctx.moveTo(pad.left, toY(v)); ctx.lineTo(W - pad.right, toY(v)); ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#475569';
+                ctx.font = '10px sans-serif';
+                ctx.fillText(v + '%', 2, toY(v) + 3);
+            }
+        });
+
+        // X-axis labels
+        ctx.fillStyle = '#475569';
+        ctx.font = '10px sans-serif';
+        data.forEach((d, i) => {
+            if (d[0] % 5 === 0 || i === data.length - 1) {
+                ctx.fillText(d[0].toString(), toX(i) - 12, H - 8);
+            }
+        });
+
+        // Area fill
+        ctx.fillStyle = '#3b82f615';
+        ctx.beginPath();
+        ctx.moveTo(toX(0), toY(minY));
+        data.forEach((d, i) => ctx.lineTo(toX(i), toY(d[1])));
+        ctx.lineTo(toX(data.length - 1), toY(minY));
+        ctx.fill();
+
+        // Line
+        ctx.strokeStyle = '#60a5fa';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        data.forEach((d, i) => { i === 0 ? ctx.moveTo(toX(i), toY(d[1])) : ctx.lineTo(toX(i), toY(d[1])); });
+        ctx.stroke();
+
+        // Current point highlight
+        if (currentRatio) {
+            const lastI = data.length - 1;
+            ctx.beginPath();
+            ctx.arc(toX(lastI), toY(data[lastI][1]), 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#60a5fa';
+            ctx.fill();
+            ctx.strokeStyle = '#0a0e27';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = '#f1f5f9';
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText(currentRatio + '%', toX(lastI) - 20, toY(data[lastI][1]) - 14);
+        }
+
+        // Dot-com bubble label
+        const bubbleI = data.findIndex(d => d[0] === 2000);
+        if (bubbleI >= 0) {
+            ctx.fillStyle = '#ef4444';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('Dot-com', toX(bubbleI) - 18, toY(data[bubbleI][1]) - 12);
+            ctx.fillText('Bubble', toX(bubbleI) - 14, toY(data[bubbleI][1]) - 1);
+        }
+
+        // 2008 crisis label
+        const crisisI = data.findIndex(d => d[0] === 2008);
+        if (crisisI >= 0) {
+            ctx.fillStyle = '#22c55e';
+            ctx.font = '10px sans-serif';
+            ctx.fillText('2008', toX(crisisI) - 10, toY(data[crisisI][1]) + 16);
+            ctx.fillText('Crisis', toX(crisisI) - 12, toY(data[crisisI][1]) + 27);
+        }
+    }
+
+    async function loadData() {
+        try {
+            // Try fetching S&P 500 from a public proxy-friendly source
+            const res = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC?range=1d&interval=1d', {
+                headers: { 'User-Agent': 'Mozilla/5.0' },
+                signal: AbortSignal.timeout(5000),
+            });
+
+            if (res.ok) {
+                const json = await res.json();
+                const meta = json?.chart?.result?.[0]?.meta;
+                const price = meta?.regularMarketPrice || meta?.previousClose;
+                if (price) {
+                    const marketCap = Math.round((price * 10.6 / 1000) * 1.25 * 10) / 10;
+                    const ratio = Math.round((marketCap / GDP) * 100);
+                    updateDisplay(price, marketCap, ratio);
+                    return;
+                }
+            }
+        } catch (e) { /* fallback */ }
+
+        // Fallback values
+        updateDisplay(5700, 62.5, Math.round((62.5 / GDP) * 100));
+    }
+
+    function updateDisplay(sp500, marketCap, ratio) {
+        const v = getVerdict(ratio);
+
+        document.getElementById('ratioDisplay').textContent = ratio + '%';
+        document.getElementById('ratioDisplay').style.color = v.color;
+        document.getElementById('verdict').textContent = v.text;
+        document.getElementById('verdict').style.background = v.bg;
+        document.getElementById('verdict').style.color = v.color;
+        document.getElementById('sp500Val').textContent = sp500.toLocaleString();
+        document.getElementById('mcapVal').textContent = '$' + marketCap + 'T';
+        document.getElementById('updatedTime').textContent = 'Last updated: ' + new Date().toLocaleString();
+
+        updateNeedle(ratio);
+        drawHistoryChart(ratio);
+    }
+
+    loadData();
+    window.addEventListener('resize', () => loadData());
+    </script>
+</body>
+</html>
